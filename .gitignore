@@ -17,11 +17,12 @@
 # Go workspace file
 go.work
 
+test.db
 
 #################################################################
 
 
-#Ignores for React.js:
+# Ignores for React.js:
 .DS_STORE
 node_modules
 scripts/flow/*/.flowconfig
