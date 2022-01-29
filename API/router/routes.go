@@ -14,10 +14,10 @@ func InitRoutes() *gin.Engine {
 		c.JSON(http.StatusOK, gin.H{"ok": true})
 	})
 
-	articleGroup := router.Group("/product")
+	productGroup := router.Group("/product")
 	{
-		articleGroup.GET("", product.GetAllProductsBrief)
-		articleGroup.POST("", product.AddNewProduct)
+		productGroup.GET("", product.GetAllProductsBrief)
+		productGroup.POST("", product.AddNewProduct)
 	}
 
 	return router

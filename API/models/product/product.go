@@ -10,10 +10,10 @@ import (
 type Product struct {
 	ID          *int      `json:"id" gorm:"primary_key"`
 	Name        string    `json:"name" binding:"required"`
-	Price       string    `json:"price"`
 	Status      string    `json:"status"`
 	Rating      string    `json:"rating"`
 	Description string    `json:"description"`
+	Price       int       `json:"price"`
 	Feature     []Feature `json:"feature" gorm:"-"`
 }
 
