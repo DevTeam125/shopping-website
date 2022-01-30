@@ -7,12 +7,12 @@ import (
 
 type Feature struct {
 	ID          int    `json:"id" gorm:"primary_key"`
-	ProductID   int    `json:"article_id"` // Link to Product ID
+	ProductID   int    `json:"product_id"` // Link to Product ID
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-func SaveProduct(p []Feature) error {
+func SaveFeatures(p []Feature) error {
 
 	err := models.DB.Create(p).Error
 	if err != nil && err != gorm.ErrRecordNotFound {

@@ -36,6 +36,7 @@ func AddNewProduct(c *gin.Context) {
 	}
 
 	features := product1.Feature
+	photos := product1.Photo
 
 	err = product1.SaveProduct()
 	if err != nil {
@@ -48,8 +49,21 @@ func AddNewProduct(c *gin.Context) {
 		for i, _ := range features {
 			features[i].ProductID = *product1.ID
 		}
-		//fmt.Println(features)
-		err = product.SaveProduct(features)
+
+		err = product.SaveFeatures(features)
+		if err != nil {
+			log.Printf(err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
+			return
+		}
+	}
+
+	if photos != nil {
+		for i, _ := range photos {
+			photos[i].ProductID = *product1.ID
+		}
+
+		err = product.SavePhotos(photos)
 		if err != nil {
 			log.Printf(err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
