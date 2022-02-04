@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/DevTeam125/shopping-website/models/product"
+	l "github.com/DevTeam125/shopping-website/pkg/logging"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +19,8 @@ func GetProductByID(c *gin.Context) {
 	}
 	result, err := product.GetProductByID(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
+		l.Logging.Errorw("DataBase While Using GetProductByID", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"ok": true, "result": result})
@@ -40,13 +42,11 @@ func AddNewProduct(c *gin.Context) {
 	err := c.BindJSON(&product1)
 
 	if err != nil {
-		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
 		return
 	}
 
 	if product1.ID != nil {
-		log.Println("product.ID is set")
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
 		return
 	}
@@ -61,7 +61,7 @@ func AddNewProduct(c *gin.Context) {
 
 	err = product1.SaveProduct()
 	if err != nil {
-		log.Println(err.Error())
+		l.Logging.Errorw("DataBase While Saving Product", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 		return
 	}
@@ -73,7 +73,7 @@ func AddNewProduct(c *gin.Context) {
 
 		err = product.SaveFeatures(features)
 		if err != nil {
-			log.Println(err.Error())
+			l.Logging.Errorw("DataBase While Saving Features", "error", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 			return
 		}
@@ -86,7 +86,7 @@ func AddNewProduct(c *gin.Context) {
 
 		err = product.SavePhotos(photos)
 		if err != nil {
-			log.Println(err.Error())
+			l.Logging.Errorw("DataBase While Saving Photos", "error", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 			return
 		}
@@ -100,7 +100,6 @@ func UpdateProduct(c *gin.Context) {
 	err := c.BindJSON(&productToBeUpdated)
 
 	if err != nil {
-		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
 		return
 	}
@@ -112,7 +111,8 @@ func UpdateProduct(c *gin.Context) {
 
 	done, err := productToBeUpdated.UpdateProduct()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
+		l.Logging.Errorw("DataBase While Updating Product", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 		return
 	}
 
@@ -135,7 +135,8 @@ func DeleteProductByID(c *gin.Context) {
 
 	done, err := product.DeleteProductByID(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
+		l.Logging.Errorw("DataBase While Deleting Product", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"ok": false})
 		return
 	}
 

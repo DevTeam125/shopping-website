@@ -1,8 +1,7 @@
 package config
 
 import (
-	"log"
-
+	l "github.com/DevTeam125/shopping-website/pkg/logging"
 	"github.com/go-ini/ini"
 )
 
@@ -23,7 +22,7 @@ func Init() {
 	var err error
 	cfg, err = ini.Load("config/app.ini")
 	if err != nil {
-		log.Fatalf("setting.Setup, fail to parse 'app.ini': %v", err)
+		l.Logging.Fatalw("Failed to parse 'app.ini'", "error", err)
 	}
 
 	mapTo("database", DatabaseSetting)
@@ -31,6 +30,6 @@ func Init() {
 func mapTo(section string, v interface{}) {
 	err := cfg.Section(section).MapTo(v)
 	if err != nil {
-		log.Fatalf("Cfg.MapTo %s err: %v", section, err)
+		l.Logging.Fatalw("Failed to map", "error", err)
 	}
 }
