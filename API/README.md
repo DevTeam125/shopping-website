@@ -9,10 +9,10 @@
   <li>Restful API</li>
   <li>Gin</li>
   <li>Gorm</li>
+  <li>Logging</li>
 </ul>
 To Be Added:
 <ul>
-  <li>Docker</li>
-  <li>Logging</li>
+  <li>Docker</li> 
   <li>Testing</li>
 </ul>
