@@ -17,7 +17,10 @@ func InitRoutes() *gin.Engine {
 	productGroup := router.Group("/product")
 	{
 		productGroup.GET("", product.GetAllProductsBrief)
+		productGroup.GET(":id", product.GetProductByID)
 		productGroup.POST("", product.AddNewProduct)
+		productGroup.PUT("", product.UpdateProduct)
+		productGroup.DELETE(":id", product.DeleteProductByID)
 	}
 
 	return router

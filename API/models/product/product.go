@@ -6,14 +6,14 @@ import (
 )
 
 type Product struct {
-	ID          *int      `json:"id" gorm:"primary_key"`
-	Name        string    `json:"name" binding:"required"`
-	Status      string    `json:"status"`
-	Rating      int       `json:"rating"`
-	Description string    `json:"description"`
-	Price       int       `json:"price"`
-	Feature     []Feature `json:"feature" gorm:"-"`
-	Photo       []Photo   `json:"photo" gorm:"-"`
+	ID          *int      `json:"id,omitempty" gorm:"primary_key"`
+	Name        string    `json:"name,omitempty"`
+	Status      string    `json:"status,omitempty"`
+	Rating      int       `json:"rating,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Price       int       `json:"price,omitempty"`
+	Feature     []Feature `json:"feature,omitempty" gorm:"-"`
+	Photo       []Photo   `json:"photo,omitempty" gorm:"-"`
 }
 
 func Init() {
@@ -69,7 +69,6 @@ func (p *Product) GetAllProductsBrief(pageNum int, pageSize int) (*[]Product, er
 				out[i].Photo = append(out[i].Photo, photo)
 				done = true
 			}
-
 		}
 
 		if !done {
@@ -85,11 +84,21 @@ func (p *Product) GetAllProductsBrief(pageNum int, pageSize int) (*[]Product, er
 }
 func (p *Product) GetProductByID(id int) (*Product, error) {
 	var product *Product
-	err := models.DB.Where("ID = ?", id).First(&product).Error
+	err := models.DB.First(&product, id).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 
+	if err != gorm.ErrRecordNotFound {
+		id = *product.ID
+		var photos []Photo
+		models.DB.Where("product_id = ?", id).Find(&photos)
+		product.Photo = photos
+
+		var features []Feature
+		models.DB.Where("product_id = ?", id).Find(&features)
+		product.Feature = features
+	}
 	return product, nil
 }
 
@@ -100,4 +109,44 @@ func (p *Product) SaveProduct() error {
 	}
 
 	return nil
+}
+
+func (p *Product) UpdateProduct() (bool, error) {
+	//temp := p
+	//temp.ID = nil
+	//fmt.Println(p)
+	err := models.DB.Model(&p).Updates(p).Error
+	if err != nil {
+		return false, err
+	}
+
+	for _, v := range p.Feature {
+		models.DB.Model(Feature{}).Where("product_id = ? AND id = ?", p.ID, v.ID).Updates(v)
+	}
+
+	for _, v := range p.Photo {
+		models.DB.Model(Photo{}).Where("product_id = ? AND id = ?", p.ID, v.ID).Updates(v)
+	}
+
+	return true, nil
+}
+
+func (p *Product) DeleteProductByID(id int) (bool, error) {
+
+	err := models.DB.Delete(p, id).Error
+	if err != nil {
+		return false, err
+	}
+
+	err = models.DB.Where("product_id = ?", id).Delete(Feature{}).Error
+	if err != nil {
+		return false, err
+	}
+
+	err = models.DB.Where("product_id = ?", id).Delete(Photo{}).Error
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
