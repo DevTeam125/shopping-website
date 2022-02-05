@@ -39,7 +39,7 @@ func GetAllProductsBrief(c *gin.Context) {
 
 func AddNewProduct(c *gin.Context) {
 	var product1 product.Product
-	err := c.BindJSON(&product1)
+	err := c.ShouldBind(&product1)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})
@@ -97,7 +97,7 @@ func AddNewProduct(c *gin.Context) {
 
 func UpdateProduct(c *gin.Context) {
 	var productToBeUpdated product.Product
-	err := c.BindJSON(&productToBeUpdated)
+	err := c.ShouldBind(&productToBeUpdated)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"ok": false})

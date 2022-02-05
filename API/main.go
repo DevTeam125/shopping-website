@@ -14,9 +14,6 @@ func main() {
 	logging.Init()
 	defer logging.Logger.Sync()
 
-	logging.ZapInstanceForGin()
-	defer logging.ZapLogger.Sync()
-
 	models.Init()
 	product.Init()
 

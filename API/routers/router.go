@@ -1,34 +1,41 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/DevTeam125/shopping-website/controllers/product"
 	l "github.com/DevTeam125/shopping-website/pkg/logging"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 func InitRoutes() *gin.Engine {
 	router := gin.New()
-	logger := l.ZapLogger
-	defer logger.Sync()
+	router.SetTrustedProxies(nil)
+	gin.DisableConsoleColor()
+
+	f, err := os.OpenFile("logs/gin.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		l.Logging.Fatalw("While opening logs/gin.log", "error", err)
+	}
+	gin.DefaultWriter = f
+
 	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 
-		logger.Info("",
-			zap.String("Method", param.Method),
-			zap.String("IP", param.ClientIP),
-			zap.String("TS", param.TimeStamp.Format(time.RFC1123)),
-			zap.String("Path", param.Path),
-			zap.String("Proto", param.Request.Proto),
-			zap.Int("StatusCode", param.StatusCode),
-			zap.Duration("Latency", param.Latency),
-			zap.String("UserAgent", param.Request.UserAgent()),
-			zap.String("ErrorMessage", param.ErrorMessage),
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
 		)
 
-		return ""
 	}))
 	router.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
 		if err, ok := recovered.(string); ok {
