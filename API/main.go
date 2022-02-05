@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/DevTeam125/shopping-website/config"
 	"github.com/DevTeam125/shopping-website/models"
 	"github.com/DevTeam125/shopping-website/models/product"
+	"github.com/DevTeam125/shopping-website/pkg/config"
 	"github.com/DevTeam125/shopping-website/pkg/logging"
 	"github.com/DevTeam125/shopping-website/routers"
 )
