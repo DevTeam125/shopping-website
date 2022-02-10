@@ -26,11 +26,11 @@ func Init() {
 
 	cfg.Level = zap.NewAtomicLevel()
 	cfg.OutputPaths = []string{
-		"winfile:///" + filepath.Join(getPWD(), "logs/app.log"),
+		"winfile:///" + filepath.Join(getPWD(), "logs/error.log"),
 		"stdout",
 	}
 	cfg.ErrorOutputPaths = []string{
-		"winfile:///" + filepath.Join(getPWD(), "logs/app.log"),
+		"winfile:///" + filepath.Join(getPWD(), "logs/error.log"),
 		"stderr",
 	}
 

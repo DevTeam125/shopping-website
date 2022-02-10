@@ -1,12 +1,11 @@
 package routers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/DevTeam125/shopping-website/controllers/product"
+	"github.com/DevTeam125/shopping-website/middlewares"
 	l "github.com/DevTeam125/shopping-website/pkg/logging"
 	"github.com/gin-gonic/gin"
 )
@@ -22,32 +21,10 @@ func InitRoutes() *gin.Engine {
 	}
 	gin.DefaultWriter = f
 
-	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
-			param.ClientIP,
-			param.TimeStamp.Format(time.RFC1123),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCode,
-			param.Latency,
-			param.Request.UserAgent(),
-			param.ErrorMessage,
-		)
-
-	}))
-	router.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
-		if err, ok := recovered.(string); ok {
-			l.Logging.Errorw("Gin Panic Recovered", "error", err)
-			//c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		}
-		l.Logging.Info("Aborted duo to panic recovery")
-		c.AbortWithStatus(http.StatusInternalServerError)
-	}))
+	router.Use(gin.LoggerWithFormatter(middlewares.Logger()))
+	router.Use(gin.CustomRecovery(middlewares.Recovery()))
 
 	router.GET("/", func(c *gin.Context) {
-		//panic("Got Here")
 		c.JSON(http.StatusOK, gin.H{"ok": true})
 	})
 
