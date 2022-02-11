@@ -19,6 +19,7 @@ func InitRoutes() *gin.Engine {
 	if err != nil {
 		l.Logging.Fatalw("While opening logs/gin.log", "error", err)
 	}
+
 	gin.DefaultWriter = f
 
 	router.Use(gin.LoggerWithFormatter(middlewares.Logger()))
